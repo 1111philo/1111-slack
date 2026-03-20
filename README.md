@@ -1,34 +1,38 @@
 # 1111-slack
 
-Daily summaries of 11:11 Philosopher's Group Slack conversations, saved as markdown files.
+Daily summaries of 11:11 Philosopher's Group Slack conversations, saved as markdown files to S3.
+
+## Architecture
+
+AWS Lambda on a daily cron (6 AM UTC) → fetches Slack messages → summarizes with Claude → writes to S3.
 
 ## Setup
 
-1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps) with these bot token scopes:
-   - `channels:history` — read messages
-   - `channels:read` — list channels
-   - `users:read` — resolve display names
+### 1. Slack app
 
-2. Install the app to the workspace and invite the bot to channels you want summarized.
+Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps) with bot token scopes:
+- `channels:history` — read messages
+- `channels:read` — list channels
+- `users:read` — resolve display names
 
-3. Copy `.env.example` to `.env` and fill in your tokens:
-   ```
-   cp .env.example .env
-   ```
+Install to workspace and invite the bot to channels you want summarized.
 
-4. Install dependencies:
-   ```
-   npm install
-   ```
+### 2. SSM parameters
 
-## Usage
+Store secrets in AWS SSM Parameter Store:
 
-```
-npm start
+```bash
+aws ssm put-parameter --name /1111-slack/slack-bot-token --type SecureString --value "xoxb-..."
+aws ssm put-parameter --name /1111-slack/anthropic-api-key --type SecureString --value "sk-ant-..."
 ```
 
-Generates a summary of the last 24 hours of Slack activity and saves it to `summaries/YYYY-MM-DD.md`.
+### 3. Deploy
+
+```bash
+sam build
+sam deploy
+```
 
 ## Output
 
-Summaries are saved in the `summaries/` directory as markdown files, one per day, with per-channel sections.
+Summaries are saved to the `1111-slack-summaries` S3 bucket as `summaries/YYYY-MM-DD.md`, one per day, with per-channel sections.

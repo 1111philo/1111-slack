@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Daily Slack conversation summaries
+
+Parameters:
+  SlackBotToken:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /1111-slack/slack-bot-token
+  AnthropicApiKey:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /1111-slack/anthropic-api-key
+
+Resources:
+  SummariesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: 1111-slack-summaries
+
+  SummaryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/index.handler
+      Runtime: nodejs20.x
+      Timeout: 300
+      MemorySize: 256
+      Environment:
+        Variables:
+          SLACK_BOT_TOKEN: !Ref SlackBotToken
+          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
+          SUMMARIES_BUCKET: !Ref SummariesBucket
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref SummariesBucket
+      Events:
+        DailySchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 6 * * ? *)
+            Description: Run daily at 6 AM UTC
