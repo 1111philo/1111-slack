@@ -17,14 +17,15 @@ Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps) with bot 
 
 Install to workspace and invite the bot to channels you want summarized.
 
-### 2. SSM parameters
+### 2. SSM parameter
 
-Store secrets in AWS SSM Parameter Store:
+Store the Slack bot token in AWS SSM Parameter Store:
 
 ```bash
 aws ssm put-parameter --name /1111-slack/slack-bot-token --type SecureString --value "xoxb-..."
-aws ssm put-parameter --name /1111-slack/anthropic-api-key --type SecureString --value "sk-ant-..."
 ```
+
+No Anthropic API key needed — uses Claude on Amazon Bedrock via the Lambda's IAM role.
 
 ### 3. Deploy
 

@@ -6,9 +6,6 @@ Parameters:
   SlackBotToken:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /1111-slack/slack-bot-token
-  AnthropicApiKey:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /1111-slack/anthropic-api-key
 
 Resources:
   SummariesBucket:
@@ -26,11 +23,14 @@ Resources:
       Environment:
         Variables:
           SLACK_BOT_TOKEN: !Ref SlackBotToken
-          ANTHROPIC_API_KEY: !Ref AnthropicApiKey
           SUMMARIES_BUCKET: !Ref SummariesBucket
       Policies:
         - S3CrudPolicy:
             BucketName: !Ref SummariesBucket
+        - Statement:
+            - Effect: Allow
+              Action: bedrock:InvokeModel
+              Resource: "arn:aws:bedrock:us-east-2::foundation-model/us.anthropic.claude-sonnet-4-5-20250514-v1:0"
       Events:
         DailySchedule:
           Type: Schedule

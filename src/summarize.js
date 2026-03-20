@@ -1,10 +1,9 @@
-import Anthropic from "@anthropic-ai/sdk";
+import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
 
-const client = new Anthropic();
+const client = new AnthropicBedrock({ awsRegion: "us-east-2" });
 
 /**
  * Summarize a channel's messages into a concise markdown section.
- * Returns null if there's nothing meaningful to summarize.
  */
 export async function summarizeChannel(channelName, messages, userNames) {
   const formatted = messages
@@ -19,7 +18,7 @@ export async function summarizeChannel(channelName, messages, userNames) {
     .join("\n");
 
   const res = await client.messages.create({
-    model: "claude-sonnet-4-5-20250514",
+    model: "us.anthropic.claude-sonnet-4-5-20250514-v1:0",
     max_tokens: 1024,
     messages: [
       {
