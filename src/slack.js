@@ -1,13 +1,28 @@
 import { WebClient } from "@slack/web-api";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 
-const slack = new WebClient(process.env.SLACK_BOT_TOKEN);
+let slack;
+
+async function getClient() {
+  if (slack) return slack;
+  const ssm = new SSMClient();
+  const res = await ssm.send(
+    new GetParameterCommand({
+      Name: process.env.SLACK_TOKEN_PARAM,
+      WithDecryption: true,
+    })
+  );
+  slack = new WebClient(res.Parameter.Value);
+  return slack;
+}
 
 /** Fetch all public channels the bot is a member of. */
 export async function getChannels() {
+  const client = await getClient();
   const channels = [];
   let cursor;
   do {
-    const res = await slack.conversations.list({
+    const res = await client.conversations.list({
       types: "public_channel",
       exclude_archived: true,
       limit: 200,
@@ -21,11 +36,12 @@ export async function getChannels() {
 
 /** Fetch messages from a channel in the last 24 hours. */
 export async function getMessages(channelId) {
+  const client = await getClient();
   const oldest = String(Math.floor(Date.now() / 1000) - 86400);
   const messages = [];
   let cursor;
   do {
-    const res = await slack.conversations.history({
+    const res = await client.conversations.history({
       channel: channelId,
       oldest,
       limit: 200,
@@ -43,10 +59,11 @@ export async function getMessages(channelId) {
 
 /** Look up display names for a set of user IDs. */
 export async function getUserNames(userIds) {
+  const client = await getClient();
   const names = {};
   for (const id of userIds) {
     try {
-      const res = await slack.users.info({ user: id });
+      const res = await client.users.info({ user: id });
       names[id] =
         res.user.profile.display_name || res.user.real_name || res.user.name;
     } catch {

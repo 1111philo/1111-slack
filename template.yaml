@@ -2,11 +2,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Daily Slack conversation summaries
 
-Parameters:
-  SlackBotToken:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /1111-slack/slack-bot-token
-
 Resources:
   SummariesBucket:
     Type: AWS::S3::Bucket
@@ -22,7 +17,7 @@ Resources:
       MemorySize: 256
       Environment:
         Variables:
-          SLACK_BOT_TOKEN: !Ref SlackBotToken
+          SLACK_TOKEN_PARAM: /1111-slack/slack-bot-token
           SUMMARIES_BUCKET: !Ref SummariesBucket
       Policies:
         - S3CrudPolicy:
@@ -31,6 +26,10 @@ Resources:
             - Effect: Allow
               Action: bedrock:InvokeModel
               Resource: "arn:aws:bedrock:us-east-2::foundation-model/us.anthropic.claude-sonnet-4-5-20250514-v1:0"
+        - Statement:
+            - Effect: Allow
+              Action: ssm:GetParameter
+              Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/1111-slack/slack-bot-token"
       Events:
         DailySchedule:
           Type: Schedule
