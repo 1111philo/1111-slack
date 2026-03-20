@@ -18,7 +18,9 @@ Resources:
         - Statement:
             - Effect: Allow
               Action: bedrock:InvokeModel
-              Resource: "arn:aws:bedrock:us-east-2::foundation-model/us.anthropic.claude-3-5-haiku-20241022-v1:0"
+              Resource:
+                - "arn:aws:bedrock:us-east-2::foundation-model/us.anthropic.claude-3-5-haiku-20241022-v1:0"
+                - !Sub "arn:aws:bedrock:us-east-2:${AWS::AccountId}:inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0"
         - Statement:
             - Effect: Allow
               Action: ssm:GetParameter
