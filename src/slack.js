@@ -28,7 +28,8 @@ export async function getChannels() {
       limit: 200,
       cursor,
     });
-    channels.push(...(res.channels || []));
+    // Only include channels the bot is a member of
+    channels.push(...(res.channels || []).filter((c) => c.is_member));
     cursor = res.response_metadata?.next_cursor;
   } while (cursor);
   return channels;
