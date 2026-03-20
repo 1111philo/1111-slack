@@ -23,6 +23,12 @@ Resources:
                 - !Sub "arn:aws:bedrock:*:${AWS::AccountId}:inference-profile/us.anthropic.claude-3-5-haiku-*"
         - Statement:
             - Effect: Allow
+              Action:
+                - aws-marketplace:ViewSubscriptions
+                - aws-marketplace:Subscribe
+              Resource: "*"
+        - Statement:
+            - Effect: Allow
               Action: ssm:GetParameter
               Resource:
                 - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/1111-slack/slack-bot-token"
