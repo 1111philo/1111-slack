@@ -1,0 +1,15 @@
+{
+  "name": "1111-slack",
+  "version": "1.0.0",
+  "description": "Daily summaries of 11:11 Philosopher's Group Slack conversations",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "summary": "node src/index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0",
+    "@slack/web-api": "^7.9.1"
+  }
+}
