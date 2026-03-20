@@ -58,6 +58,15 @@ export async function getMessages(channelId) {
     .reverse(); // chronological order
 }
 
+/** Post a message to a channel by name. */
+export async function postMessage(channelName, text) {
+  const client = await getClient();
+  const channels = await getChannels();
+  const channel = channels.find((c) => c.name === channelName);
+  if (!channel) throw new Error(`Channel #${channelName} not found or bot not a member`);
+  await client.chat.postMessage({ channel: channel.id, text });
+}
+
 /** Look up display names for a set of user IDs. */
 export async function getUserNames(userIds) {
   const client = await getClient();

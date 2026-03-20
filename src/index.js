@@ -1,4 +1,4 @@
-import { getChannels, getMessages, getUserNames } from "./slack.js";
+import { getChannels, getMessages, getUserNames, postMessage } from "./slack.js";
 import { summarizeChannel } from "./summarize.js";
 import { commitFile } from "./github.js";
 
@@ -39,5 +39,10 @@ export async function handler() {
   await commitFile(path, content, `Add daily summary for ${today}`);
 
   console.log(`Committed ${path} to GitHub`);
+
+  const summaryUrl = `https://github.com/1111philo/1111-slack/blob/main/${path}`;
+  await postMessage("ai-leaders-admin", `📋 Daily Slack summary for ${today}: ${summaryUrl}`);
+  console.log("Posted link to #ai-leaders-admin");
+
   return { status: "ok", date: today, channels: channelMessages.length };
 }
