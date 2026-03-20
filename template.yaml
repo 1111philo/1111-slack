@@ -3,11 +3,6 @@ Transform: AWS::Serverless-2016-10-31
 Description: Daily Slack conversation summaries
 
 Resources:
-  SummariesBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: 1111-slack-summaries
-
   SummaryFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -18,10 +13,8 @@ Resources:
       Environment:
         Variables:
           SLACK_TOKEN_PARAM: /1111-slack/slack-bot-token
-          SUMMARIES_BUCKET: !Ref SummariesBucket
+          GITHUB_TOKEN_PARAM: /1111-slack/github-token
       Policies:
-        - S3CrudPolicy:
-            BucketName: !Ref SummariesBucket
         - Statement:
             - Effect: Allow
               Action: bedrock:InvokeModel
@@ -29,7 +22,9 @@ Resources:
         - Statement:
             - Effect: Allow
               Action: ssm:GetParameter
-              Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/1111-slack/slack-bot-token"
+              Resource:
+                - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/1111-slack/slack-bot-token"
+                - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/1111-slack/github-token"
       Events:
         DailySchedule:
           Type: Schedule

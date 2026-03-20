@@ -1,9 +1,6 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getChannels, getMessages, getUserNames } from "./slack.js";
 import { summarizeChannel } from "./summarize.js";
-
-const s3 = new S3Client();
-const BUCKET = process.env.SUMMARIES_BUCKET;
+import { commitFile } from "./github.js";
 
 export async function handler() {
   const today = new Date().toISOString().split("T")[0];
@@ -37,16 +34,10 @@ export async function handler() {
   }
 
   const content = `# Slack Summary — ${today}\n\n${sections.join("\n\n---\n\n")}\n`;
+  const path = `summaries/${today}.md`;
 
-  await s3.send(
-    new PutObjectCommand({
-      Bucket: BUCKET,
-      Key: `summaries/${today}.md`,
-      Body: content,
-      ContentType: "text/markdown",
-    })
-  );
+  await commitFile(path, content, `Add daily summary for ${today}`);
 
-  console.log(`Saved to s3://${BUCKET}/summaries/${today}.md`);
+  console.log(`Committed ${path} to GitHub`);
   return { status: "ok", date: today, channels: channelMessages.length };
 }
