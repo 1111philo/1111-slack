@@ -1,9 +1,9 @@
 version = 0.1
 
 [default.deploy.parameters]
-stack_name = "1111-slack"
+stack_name = "slack-1111"
 resolve_s3 = true
-s3_prefix = "1111-slack"
+s3_prefix = "slack-1111"
 region = "us-east-2"
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = false

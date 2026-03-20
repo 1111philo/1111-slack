@@ -26,8 +26,8 @@ jobs:
           sam deploy
           --no-confirm-changeset
           --no-fail-on-empty-changeset
-          --stack-name 1111-slack
+          --stack-name slack-1111
           --resolve-s3
-          --s3-prefix 1111-slack
+          --s3-prefix slack-1111
           --region us-east-2
           --capabilities CAPABILITY_IAM
