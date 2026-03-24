@@ -41,8 +41,8 @@ export async function handler() {
   console.log(`Committed ${path} to GitHub`);
 
   const summaryUrl = `https://github.com/1111philo/1111-slack/blob/main/${path}`;
-  await postMessage("ai-leaders-admin", `📋 Daily Slack summary for ${today}: ${summaryUrl}`);
-  console.log("Posted link to #ai-leaders-admin");
+  await postMessage("ai-leaders-admins", `📋 Daily Slack summary for ${today}: ${summaryUrl}`);
+  console.log("Posted link to #ai-leaders-admins");
 
   return { status: "ok", date: today, channels: channelMessages.length };
 }
