@@ -23,7 +23,7 @@ export async function getChannels() {
   let cursor;
   do {
     const res = await client.conversations.list({
-      types: "public_channel",
+      types: "public_channel,private_channel",
       exclude_archived: true,
       limit: 200,
       cursor,
