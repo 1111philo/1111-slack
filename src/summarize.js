@@ -28,10 +28,18 @@ export async function summarizeChannel(channelName, messages, userNames) {
       body: JSON.stringify({
         anthropic_version: "bedrock-2023-05-31",
         max_tokens: 1024,
+        temperature: 0,
         messages: [
           {
             role: "user",
-            content: `Summarize this Slack conversation from #${channelName}. Write a concise summary capturing key topics, decisions, and action items. Use bullet points. If the conversation is trivial (just greetings, reactions, or very short), say so in one line.
+            content: `You are summarizing a Slack conversation from #${channelName}. Produce a clean, concise markdown summary. Do NOT repeat or stutter words. Every word should appear only once.
+
+Rules:
+- Use bullet points for key topics, decisions, and action items.
+- Mention people by name when relevant.
+- If the conversation is trivial (just greetings, reactions, or very short), write one sentence saying so.
+- Do NOT include a title or header — just the summary content.
+- Do NOT duplicate any words or phrases.
 
 Messages:
 ${formatted}`,
